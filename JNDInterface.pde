@@ -12,12 +12,10 @@ Button whiteBtn = new Button(150, 300, 200, 100, "White");
 Button blackBtn =  new Button(450, 300, 200, 100, "Black");
 
 void setup(){
-  // set the window size:
   size(800, 600);
   System.out.println(Serial.list()[2]);
   // prototypeConnection1 = new Serial(this, Serial.list()[2], 9600);
   // prototypeConnection2 = new Serial(this, Serial.list()[3], 9600);
-
   String m_pNum = getString("Participant Number?");
   int m_startValue = getInt("Starting Stimuli?");
   int m_staircaseOrder = getInt("Up (0) or Down (1)?");
@@ -51,16 +49,8 @@ void mousePressed() {
   if (whiteBtn.overBtn(mouseX, mouseY)) {
     m_Session.newAnswer(1);
     background(0);
-  } else if (blackBtn.overBtn(451, 301)) {
+  } else if (blackBtn.overBtn(mouseX, mouseY)) {
     m_Session.newAnswer(0);
     background(0);
-  }
-}
-
-void serialEvent (Serial myPort) {
-  String inString = myPort.readStringUntil('\n');
-  System.out.println(inString);
-  if (inString != null) {
-
   }
 }

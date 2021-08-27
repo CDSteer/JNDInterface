@@ -12,15 +12,19 @@ public class Session {
   private String pNum;
   private int startValue;
   private int staircaseOrder;
-
   private String staircaseOrderName;
-  private int reveralCount;
-  private int trialCount;
+
   private Table table;
   private String tableName;
+
+  private int reveralCount;
+  private int trialCount;
+  
   private Trial currentTrail;
-  private int lastAnswerCorrect;
+
   private boolean updatePrototypes;
+
+  private int lastAnswerCorrect;
   private int lastValue;
 
   public Session(String _pNum, int _startValue, int _staircaseOrder){
@@ -34,10 +38,7 @@ public class Session {
      }
     this.reveralCount = 0;
     this.trialCount = 0;
-
     this.currentTrail = new Trial(_startValue);
-
-
     this.updatePrototypes = true;
 
     table = new Table();
