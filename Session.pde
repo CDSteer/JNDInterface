@@ -12,11 +12,10 @@ public class Session {
   private String tableName;
   private Trial currentTrail;
   private int lastAnswerCorrect;
-
   private Random rand = new Random();
   private int upperbound = 2;
-
   private boolean updatePrototypes;
+  private int lastValue;
 
   public Session(String _pNum, int _startValue, int _staircaseOrder){
      this.pNum = _pNum;
@@ -50,16 +49,16 @@ public class Session {
   }
 
   public void newAnswer(int answer){
-     this.currentTrail.setUserAnswer(answer);
-     this.reversalCheck();
-     this.addToCSV();
+    this.updatePrototypes = true;
+    this.currentTrail.setUserAnswer(answer);
+    this.reversalCheck();
+    this.addToCSV();
   }
 
   public void addToCSV(){
     TableRow newRow = table.addRow();
     newRow.setInt("id", table.getRowCount() - 1);
     Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
 
     newRow.setString("timestamp", String.valueOf(timestamp));
     newRow.setString("reference_order", String.valueOf(currentTrail.getRefPrototype().getIsControl()));
@@ -69,14 +68,18 @@ public class Session {
     newRow.setString("reversal",  String.valueOf(currentTrail.isReversal()));
     newRow.setString("correct_answer", String.valueOf(currentTrail.getCorrectAnswer()));
     newRow.setString("user_answer",    String.valueOf(currentTrail.getUserAnswer()));
-
     saveTable(table, "data/"+pNum+"/"+tableName+".csv");
 
-    this.newTrial();
+    if (this.trialCount >= 40 || this.reveralCount == 10){
+      exit();
+    } else {
+      this.newTrial();
+    }
   }
 
   public void newTrial(){
-
+    //save infomation from last trail
+    this.lastValue = currentTrail.getControlPrototype().getServoValue();
     this.lastAnswerCorrect = this.currentTrail.getUserAnswer();
 
     // set the order
@@ -94,22 +97,17 @@ public class Session {
     currentTrail.getRefPrototype().setServoValue(this.startValue);
     if (this.staircaseOrder == 0) {
       if (currentTrail.getCorrectAnswer() == 1) {
-        currentTrail.getControlPrototype().setServoValue(currentTrail.getControlPrototype().getServoValue()+20);
+        currentTrail.getControlPrototype().setServoValue(this.lastValue+20);
       } else {
-        currentTrail.getControlPrototype().setServoValue(currentTrail.getControlPrototype().getServoValue()-20);
+        currentTrail.getControlPrototype().setServoValue(this.lastValue-20);
       }
     } else {
       if (currentTrail.getCorrectAnswer() == 1) {
-        currentTrail.getControlPrototype().setServoValue(currentTrail.getControlPrototype().getServoValue()-20);
+        currentTrail.getControlPrototype().setServoValue(this.lastValue-20);
       } else {
-        currentTrail.getControlPrototype().setServoValue(currentTrail.getControlPrototype().getServoValue()+20);
+        currentTrail.getControlPrototype().setServoValue(this.lastValue+20);
       }
     }
-
-    // TODO: update the Prototypes
-    this.updatePrototypes = true;
-
-
   }
 
   public void reversalCheck(){
@@ -124,6 +122,13 @@ public class Session {
 
   public void setUpdatePrototypes(boolean _update){
     this.updatePrototypes = _update;
+  }
+  public boolean getUpdatePrototypes(){
+    return this.updatePrototypes;
+  }
+
+  public Trial getCurrentTrail(){
+    return this.currentTrail;
   }
 
 }

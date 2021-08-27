@@ -28,10 +28,20 @@ void draw(){
   background(0);
   blackBtn.drawBtn();
   whiteBtn.drawBtn();
-  while (m_Session.updatePrototypes){
+  while (m_Session.getUpdatePrototypes()){
     background(0);
     text("updating", 400, 300);
-    // write to Prototypes with myPort.write("1");
+    if (m_Session.getCurrentTrail().getRefPrototype().getIsControl() == 0) {
+      // prototypeConnection1.write(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
+      System.out.println(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
+      // prototypeConnection2.write(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
+      System.out.println(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
+    } else {
+      // prototypeConnection2.write(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
+      System.out.println(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
+      // prototypeConnection1.write(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
+      System.out.println(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
+    }
     delay(1000);
     m_Session.setUpdatePrototypes(false);
   }
@@ -39,9 +49,11 @@ void draw(){
 
 void mousePressed() {
   if (whiteBtn.overBtn(mouseX, mouseY)) {
-    this.m_Session.newAnswer(1);
+    m_Session.newAnswer(1);
+    background(0);
   } else if (blackBtn.overBtn(451, 301)) {
-    this.m_Session.newAnswer(0);
+    m_Session.newAnswer(0);
+    background(0);
   }
 }
 

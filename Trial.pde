@@ -2,13 +2,9 @@ public class Trial {
 
   private int correctAnswer;
   private int userAnswer;
-
   private int reversal;
-
-
   private Prototype refPrototype;
   private Prototype controlPrototype;
-
 
   public Trial(int startValue){
     this.correctAnswer = 0;
