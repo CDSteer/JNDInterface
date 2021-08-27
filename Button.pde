@@ -38,15 +38,16 @@ public class Button {
     rect(this.getXPos(), this.getYPos(), this.getHeight(), this.getWidth());
     fill(0, 102, 153);
     textSize(28);
-    text(this.lable, this.getXPos()+10, this.getYPos()+30);
+    text(this.lable, this.getXPos()+(this.btnWidth/2), this.getYPos()+(this.btnWidth/2));
   }
 
-  boolean overBtn(int x, int y)  {
+  public boolean overBtn(int x, int y)  {
     if (x >= this.xPos && x <= this.xPos+this.btnWidth &&
-        y >= this.xPos && y <= this.yPos+this.btnHeight) {
+        y >= this.yPos && y <= this.yPos+this.btnHeight) {
       return true;
     } else {
       return false;
     }
+
   }
 }
