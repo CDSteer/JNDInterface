@@ -2,9 +2,17 @@ import java.sql.Timestamp;
 import java.util.Random;
 
 public class Session {
+  private static final int MAX_REVERSALS = 10;
+  private static final int MAX_TRAILS = 40;
+  private static final int NUM_PROTOTYPES = 2;
+  private static final int STIMULI_INCRIMENT = 20;
+
+  private Random rand = new Random();
+
   private String pNum;
   private int startValue;
   private int staircaseOrder;
+
   private String staircaseOrderName;
   private int reveralCount;
   private int trialCount;
@@ -12,8 +20,6 @@ public class Session {
   private String tableName;
   private Trial currentTrail;
   private int lastAnswerCorrect;
-  private Random rand = new Random();
-  private int upperbound = 2;
   private boolean updatePrototypes;
   private int lastValue;
 
@@ -70,7 +76,7 @@ public class Session {
     newRow.setString("user_answer",    String.valueOf(currentTrail.getUserAnswer()));
     saveTable(table, "data/"+pNum+"/"+tableName+".csv");
 
-    if (this.trialCount >= 40 || this.reveralCount == 10){
+    if (this.trialCount >= MAX_TRAILS || this.reveralCount == MAX_REVERSALS){
       exit();
     } else {
       this.newTrial();
@@ -83,7 +89,7 @@ public class Session {
     this.lastAnswerCorrect = this.currentTrail.getUserAnswer();
 
     // set the order
-    int int_random = rand.nextInt(upperbound);
+    int int_random = rand.nextInt(NUM_PROTOTYPES);
     this.currentTrail = new Trial(this.startValue, int_random);
 
     if (int_random == 0){
@@ -97,15 +103,15 @@ public class Session {
     currentTrail.getRefPrototype().setServoValue(this.startValue);
     if (this.staircaseOrder == 0) {
       if (currentTrail.getCorrectAnswer() == 1) {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue+20);
+        currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
       } else {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue-20);
+        currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
       }
     } else {
       if (currentTrail.getCorrectAnswer() == 1) {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue-20);
+        currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
       } else {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue+20);
+        currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
       }
     }
   }
