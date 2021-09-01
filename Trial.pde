@@ -6,22 +6,41 @@ public class Trial {
   private Prototype refPrototype;
   private Prototype controlPrototype;
 
-  public Trial(int startValue){
+  public Trial(int startValue, int _staircaseOrder, boolean isFirst){
     this.correctAnswer = 0;
     this.userAnswer = 0;
     this.refPrototype = new Prototype(startValue, 0);
-    this.controlPrototype = new Prototype(startValue+(100), 1);
+    if (_staircaseOrder == 0){
+      this.controlPrototype = new Prototype(startValue-(100), 1);
+    } else {
+      this.controlPrototype = new Prototype(startValue+(100), 1);
+    }
   }
 
-  public Trial(int lastValue, int _correctAnswer){
-    this.correctAnswer = _correctAnswer;
+  public Trial(int lastValue, int _order){
     this.userAnswer = 0;
-    if (_correctAnswer == 0) {
+    if (_order == 0) {
       this.refPrototype = new Prototype(lastValue, 1);
     } else {
       this.refPrototype = new Prototype(lastValue, 0);
     }
-    this.controlPrototype = new Prototype(lastValue, _correctAnswer);
+    this.controlPrototype = new Prototype(lastValue, _order);
+  }
+
+  private void setCorrectAnswer(int staircaseOrder){
+    if (staircaseOrder == 0){
+      if (this.controlPrototype.getServoValue() > this.refPrototype.getServoValue()){
+        this.correctAnswer = this.controlPrototype.getIsControl();
+      } else {
+        this.correctAnswer = this.refPrototype.getIsControl();
+      }
+    } else {
+      if (this.controlPrototype.getServoValue() < this.refPrototype.getServoValue()){
+        this.correctAnswer = this.controlPrototype.getIsControl();
+      } else {
+        this.correctAnswer = this.refPrototype.getIsControl();
+      }
+    }
   }
 
   public Prototype getRefPrototype(){

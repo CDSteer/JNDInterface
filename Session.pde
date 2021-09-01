@@ -38,8 +38,8 @@ public class Session {
      }
     this.reveralCount = 0;
     this.trialCount = 0;
-    this.currentTrail = new Trial(_startValue);
-    this.updatePrototypes = true;
+    this.currentTrail = new Trial(_startValue, _staircaseOrder, true);
+
 
     table = new Table();
     tableName = String.valueOf(year())+String.valueOf(month())+String.valueOf((day()))+String.valueOf((hour()))+String.valueOf((minute()))+String.valueOf((second()))+"_"+ this.pNum + "_" + this.startValue + "_" + this.staircaseOrderName;
@@ -53,6 +53,8 @@ public class Session {
     table.addColumn("reversal");
     table.addColumn("correct_answer");
     table.addColumn("user_answer");
+
+    this.updatePrototypes = true;
   }
 
   public void newAnswer(int answer){
@@ -87,10 +89,20 @@ public class Session {
   public void newTrial(){
     //save infomation from last trail
     this.lastValue = currentTrail.getControlPrototype().getServoValue();
-    this.lastAnswerCorrect = this.currentTrail.getUserAnswer();
+
+    if (this.currentTrail.getUserAnswer() == this.currentTrail.getCorrectAnswer()) {
+      this.lastAnswerCorrect = 1;
+    } else {
+      this.lastAnswerCorrect = 0;
+    }
+
+    this.lastAnswerCorrect = this.currentTrail.getCorrectAnswer();
+
 
     // set the order - TODO: seperate method?
     int int_random = rand.nextInt(NUM_PROTOTYPES);
+
+    // set the order in the trial
     this.currentTrail = new Trial(this.startValue, int_random);
 
     if (int_random == 0){
@@ -105,24 +117,27 @@ public class Session {
     currentTrail.getRefPrototype().setServoValue(this.startValue);
     if (this.staircaseOrder == 0) {
       if (currentTrail.getCorrectAnswer() == 1) {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
-      } else {
         currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
+      } else {
+        currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
       }
     } else {
       if (currentTrail.getCorrectAnswer() == 1) {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
-      } else {
         currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
+      } else {
+        currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
       }
     }
+    this.currentTrail.setCorrectAnswer(this.staircaseOrder);
   }
 
   public void reversalCheck(){
     // if the last anwser was different to the past answer
-    if (this.lastAnswerCorrect != currentTrail.getCorrectAnswer()){
+    System.out.println("reversal check: " + this.lastAnswerCorrect + ":" + this.currentTrail.getUserAnswer());
+    if (this.lastAnswerCorrect != this.currentTrail.getUserAnswer()){
       this.reveralCount++;
       currentTrail.setReversal(1);
+      System.out.println("reversal: " + this.reveralCount);
     } else {
       currentTrail.setReversal(0);
     }
@@ -138,5 +153,4 @@ public class Session {
   public Trial getCurrentTrail(){
     return this.currentTrail;
   }
-
 }
