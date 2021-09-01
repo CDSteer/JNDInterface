@@ -14,32 +14,33 @@ Button blackBtn =  new Button(450, 300, 200, 100, "Black");
 void setup(){
   size(800, 600);
   System.out.println(Serial.list()[2]);
-  // prototypeConnection1 = new Serial(this, Serial.list()[2], 9600);
-  // prototypeConnection2 = new Serial(this, Serial.list()[3], 9600);
+  System.out.println(Serial.list()[3]);
+  prototypeConnection1 = new Serial(this, Serial.list()[2], 9600);
+  prototypeConnection2 = new Serial(this, Serial.list()[3], 9600);
   String m_pNum = getString("Participant Number?");
   int m_startValue = getInt("Starting Stimuli?");
   int m_staircaseOrder = getInt("Up (0) or Down (1)?");
   m_Session = new Session(m_pNum, m_startValue, m_staircaseOrder);
+  sendValues();
 }
 
 void draw(){
   background(0);
   blackBtn.drawBtn();
   whiteBtn.drawBtn();
+
+  if (m_Session.getCurrentTrail().getRefPrototype().getIsControl() == 0) {
+    text(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()), 200, 300);
+    text(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()), 500, 300);
+  } else {
+    text(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()), 200, 300);
+    text(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()), 500, 300);
+  }
+
   while (m_Session.getUpdatePrototypes()){
     background(0);
     text("updating", 400, 300);
-    if (m_Session.getCurrentTrail().getRefPrototype().getIsControl() == 0) {
-      // prototypeConnection1.write(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
-      System.out.println(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
-      // prototypeConnection2.write(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
-      System.out.println(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
-    } else {
-      // prototypeConnection2.write(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
-      System.out.println(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
-      // prototypeConnection1.write(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
-      System.out.println(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
-    }
+    sendValues();
     delay(1000);
     m_Session.setUpdatePrototypes(false);
   }
@@ -52,5 +53,17 @@ void mousePressed() {
   } else if (blackBtn.overBtn(mouseX, mouseY)) {
     m_Session.newAnswer(0);
     background(0);
+  }
+}
+
+void sendValues(){
+  if (m_Session.getCurrentTrail().getRefPrototype().getIsControl() == 0) {
+    prototypeConnection1.write(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
+    delay(100);
+    prototypeConnection2.write(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
+  } else {
+    prototypeConnection2.write(String.valueOf(m_Session.getCurrentTrail().getRefPrototype().getServoValue()));
+    delay(100);
+    prototypeConnection1.write(String.valueOf(m_Session.getCurrentTrail().getControlPrototype().getServoValue()));
   }
 }
