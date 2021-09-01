@@ -19,7 +19,7 @@ public class Session {
 
   private int reveralCount;
   private int trialCount;
-  
+
   private Trial currentTrail;
 
   private boolean updatePrototypes;
@@ -89,7 +89,7 @@ public class Session {
     this.lastValue = currentTrail.getControlPrototype().getServoValue();
     this.lastAnswerCorrect = this.currentTrail.getUserAnswer();
 
-    // set the order
+    // set the order - TODO: seperate method?
     int int_random = rand.nextInt(NUM_PROTOTYPES);
     this.currentTrail = new Trial(this.startValue, int_random);
 
@@ -101,6 +101,7 @@ public class Session {
       currentTrail.getControlPrototype().setIsControl(0);
     }
 
+    // set the values - TODO: seperate method?
     currentTrail.getRefPrototype().setServoValue(this.startValue);
     if (this.staircaseOrder == 0) {
       if (currentTrail.getCorrectAnswer() == 1) {
