@@ -1,10 +1,10 @@
 public class Prototype {
   private int servoValue;
-  private int isControl;
+  private int order;
 
-  public Prototype(int _servoValue, int _isControl){
+  public Prototype(int _servoValue, int _order){
     this.servoValue = _servoValue;
-    this.isControl = _isControl;
+    this.order = _order;
   }
 
   public void setServoValue(int _servoValue){
@@ -13,10 +13,10 @@ public class Prototype {
   public int getServoValue(){
     return this.servoValue;
   }
-  public void setIsControl(int _isControl){
-    this.isControl = _isControl;
+  public void setOrder(int _order){
+    this.order = _order;
   }
-  public int getIsControl(){
-    return this.isControl;
+  public int getOrder(){
+    return this.order;
   }
 }

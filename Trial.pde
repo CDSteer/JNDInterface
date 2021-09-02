@@ -29,18 +29,19 @@ public class Trial {
 
   private void setCorrectAnswer(int staircaseOrder){
     if (staircaseOrder == 0){
-      if (this.controlPrototype.getServoValue() > this.refPrototype.getServoValue()){
-        this.correctAnswer = this.controlPrototype.getIsControl();
+      if (this.controlPrototype.getServoValue() < this.refPrototype.getServoValue()){
+        this.correctAnswer = this.controlPrototype.getOrder();
       } else {
-        this.correctAnswer = this.refPrototype.getIsControl();
+        this.correctAnswer = this.refPrototype.getOrder();
       }
     } else {
-      if (this.controlPrototype.getServoValue() < this.refPrototype.getServoValue()){
-        this.correctAnswer = this.controlPrototype.getIsControl();
+      if (this.controlPrototype.getServoValue() > this.refPrototype.getServoValue()){
+        this.correctAnswer = this.controlPrototype.getOrder();
       } else {
-        this.correctAnswer = this.refPrototype.getIsControl();
+        this.correctAnswer = this.refPrototype.getOrder();
       }
     }
+    System.out.println("Correct Answer: "+this.correctAnswer);
   }
 
   public Prototype getRefPrototype(){
@@ -54,6 +55,9 @@ public class Trial {
   }
   public void setReversal(int _reversal){
     this.reversal = _reversal;
+  }
+  public int getReversal(){
+    return this.reversal;
   }
   public int getCorrectAnswer(){
     return this.correctAnswer;

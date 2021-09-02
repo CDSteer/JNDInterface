@@ -21,10 +21,12 @@ public class Session {
   private int trialCount;
 
   private Trial currentTrail;
+  private Trial lastTrail;
+
 
   private boolean updatePrototypes;
 
-  private int lastAnswerCorrect;
+  // private int lastAnswerCorrect;
   private int lastValue;
 
   public Session(String _pNum, int _startValue, int _staircaseOrder){
@@ -39,6 +41,7 @@ public class Session {
     this.reveralCount = 0;
     this.trialCount = 0;
     this.currentTrail = new Trial(_startValue, _staircaseOrder, true);
+    this.currentTrail.setCorrectAnswer(_staircaseOrder);
 
 
     table = new Table();
@@ -58,89 +61,79 @@ public class Session {
   }
 
   public void newAnswer(int answer){
+    System.out.println("User Answer:" + answer);
     this.updatePrototypes = true;
     this.currentTrail.setUserAnswer(answer);
+    this.lastValue = this.currentTrail.getControlPrototype().getServoValue();
+    this.lastTrail = this.currentTrail;
     this.reversalCheck();
     this.addToCSV();
-  }
-
-  public void addToCSV(){
-    TableRow newRow = table.addRow();
-    newRow.setInt("id", table.getRowCount() - 1);
-    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
-    newRow.setString("timestamp", String.valueOf(timestamp));
-    newRow.setString("reference_order", String.valueOf(currentTrail.getRefPrototype().getIsControl()));
-    newRow.setString("reference_value", String.valueOf(currentTrail.getRefPrototype().getServoValue()));
-    newRow.setString("contol_order", String.valueOf(currentTrail.getControlPrototype().getIsControl()));
-    newRow.setString("contol_value",    String.valueOf(currentTrail.getControlPrototype().getServoValue()));
-    newRow.setString("reversal",  String.valueOf(currentTrail.isReversal()));
-    newRow.setString("correct_answer", String.valueOf(currentTrail.getCorrectAnswer()));
-    newRow.setString("user_answer",    String.valueOf(currentTrail.getUserAnswer()));
-    saveTable(table, "data/"+pNum+"/"+tableName+".csv");
-
     if (this.trialCount >= MAX_TRAILS || this.reveralCount == MAX_REVERSALS){
       exit();
     } else {
-      this.newTrial();
+      this.setNewPrototypeOrder();
     }
   }
 
-  public void newTrial(){
-    //save infomation from last trail
-    this.lastValue = currentTrail.getControlPrototype().getServoValue();
-
-    if (this.currentTrail.getUserAnswer() == this.currentTrail.getCorrectAnswer()) {
-      this.lastAnswerCorrect = 1;
+  private void reversalCheck(){
+    // if the last anwser was different to the past answer
+    // System.out.println("reversal check: " + this. + ":" + this.currentTrail.getCorrectAnswer());
+    if (this.lastTrail.getUserAnswer() != this.lastTrail.getCorrectAnswer()){
+      this.reveralCount++;
+      this.lastTrail.setReversal(1);
     } else {
-      this.lastAnswerCorrect = 0;
+      this.lastTrail.setReversal(0);
     }
+    System.out.println("reversal: "+this.currentTrail.getReversal());
+  }
 
-    this.lastAnswerCorrect = this.currentTrail.getCorrectAnswer();
-
-
+  private void setNewPrototypeOrder(){
     // set the order - TODO: seperate method?
     int int_random = rand.nextInt(NUM_PROTOTYPES);
-
-    // set the order in the trial
     this.currentTrail = new Trial(this.startValue, int_random);
-
     if (int_random == 0){
-      currentTrail.getRefPrototype().setIsControl(0);
-      currentTrail.getControlPrototype().setIsControl(1);
+      currentTrail.getRefPrototype().setOrder(0);
+      currentTrail.getControlPrototype().setOrder(1);
     } else {
-      currentTrail.getRefPrototype().setIsControl(1);
-      currentTrail.getControlPrototype().setIsControl(0);
+      currentTrail.getRefPrototype().setOrder(1);
+      currentTrail.getControlPrototype().setOrder(0);
     }
 
-    // set the values - TODO: seperate method?
+    // update prototype values
     currentTrail.getRefPrototype().setServoValue(this.startValue);
+
     if (this.staircaseOrder == 0) {
-      if (currentTrail.getCorrectAnswer() == 1) {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
-      } else {
+      if (this.lastTrail.getReversal() == 0) {
         currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
+      } else {
+        currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
       }
     } else {
-      if (currentTrail.getCorrectAnswer() == 1) {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
-      } else {
+      if (this.lastTrail.getReversal() == 0){
         currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
+        System.out.println("control--");
+      } else {
+        currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
+        System.out.println("control++");
       }
     }
     this.currentTrail.setCorrectAnswer(this.staircaseOrder);
   }
 
-  public void reversalCheck(){
-    // if the last anwser was different to the past answer
-    System.out.println("reversal check: " + this.lastAnswerCorrect + ":" + this.currentTrail.getUserAnswer());
-    if (this.lastAnswerCorrect != this.currentTrail.getUserAnswer()){
-      this.reveralCount++;
-      currentTrail.setReversal(1);
-      System.out.println("reversal: " + this.reveralCount);
-    } else {
-      currentTrail.setReversal(0);
-    }
+  private void addToCSV(){
+    TableRow newRow = table.addRow();
+    newRow.setInt("id", table.getRowCount() - 1);
+    Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+    newRow.setString("timestamp", String.valueOf(timestamp));
+    newRow.setString("reference_order", String.valueOf(currentTrail.getRefPrototype().getOrder()));
+    newRow.setString("reference_value", String.valueOf(currentTrail.getRefPrototype().getServoValue()));
+    newRow.setString("contol_order", String.valueOf(currentTrail.getControlPrototype().getOrder()));
+    newRow.setString("contol_value",    String.valueOf(currentTrail.getControlPrototype().getServoValue()));
+    newRow.setString("reversal",  String.valueOf(currentTrail.isReversal()));
+    newRow.setString("correct_answer", String.valueOf(currentTrail.getCorrectAnswer()));
+    newRow.setString("user_answer",    String.valueOf(currentTrail.getUserAnswer()));
+    saveTable(table, "data/"+pNum+"/"+tableName+".csv");
+    System.out.println("Data Saved");
   }
 
   public void setUpdatePrototypes(boolean _update){
