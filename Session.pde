@@ -2,10 +2,10 @@ import java.sql.Timestamp;
 import java.util.Random;
 
 public class Session {
-  private static final int MAX_REVERSALS = 10;
-  private static final int MAX_TRAILS = 40;
+  public static final int MAX_REVERSALS = 10;
+  public static final int MAX_TRAILS = 40;
   private static final int NUM_PROTOTYPES = 2;
-  private static final int STIMULI_INCRIMENT = 20;
+  private static final int STIMULI_INCRIMENT = 10;
 
   private Random rand = new Random();
 
@@ -71,6 +71,7 @@ public class Session {
     if (this.trialCount >= MAX_TRAILS || this.reveralCount == MAX_REVERSALS){
       exit();
     } else {
+      this.trialCount++;
       this.setNewPrototypeOrder();
     }
   }
@@ -145,5 +146,13 @@ public class Session {
 
   public Trial getCurrentTrail(){
     return this.currentTrail;
+  }
+
+  public int getTrailCount(){
+    return this.trialCount;
+  }
+
+  public int getReversalCount(){
+    return this.reveralCount;
   }
 }
