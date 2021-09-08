@@ -2,6 +2,7 @@ public class Trial {
   private int correctAnswer;
   private int userAnswer;
   private int reversal;
+  private int userCorrect;
 
   private Prototype refPrototype;
   private Prototype controlPrototype;
@@ -28,20 +29,16 @@ public class Trial {
   }
 
   private void setCorrectAnswer(int staircaseOrder){
-    if (staircaseOrder == 0){
-      if (this.controlPrototype.getServoValue() < this.refPrototype.getServoValue()){
-        this.correctAnswer = this.controlPrototype.getOrder();
-      } else {
-        this.correctAnswer = this.refPrototype.getOrder();
-      }
+    if (this.controlPrototype.getServoValue() > this.refPrototype.getServoValue()){
+      this.correctAnswer = this.controlPrototype.getOrder();
     } else {
-      if (this.controlPrototype.getServoValue() > this.refPrototype.getServoValue()){
-        this.correctAnswer = this.controlPrototype.getOrder();
-      } else {
-        this.correctAnswer = this.refPrototype.getOrder();
-      }
+      this.correctAnswer = this.refPrototype.getOrder();
     }
     System.out.println("Correct Answer: "+this.correctAnswer);
+  }
+
+  public boolean prototypesEqual(){
+    return this.controlPrototype.getServoValue() == this.refPrototype.getServoValue();
   }
 
   public Prototype getRefPrototype(){
@@ -66,6 +63,17 @@ public class Trial {
     return this.userAnswer;
   }
   public void setUserAnswer(int answer){
+    this.setUserCorrect(answer);
     this.userAnswer = answer;
+  }
+  public int getUserCorrect(){
+    return this.userCorrect;
+  }
+  public void setUserCorrect(int answer){
+    if (this.getCorrectAnswer() == answer) {
+      this.userCorrect = 1;
+    } else {
+      this.userCorrect = 0;
+    }
   }
 }

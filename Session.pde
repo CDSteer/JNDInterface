@@ -29,6 +29,9 @@ public class Session {
   // private int lastAnswerCorrect;
   private int lastValue;
 
+  private int curentDirection;
+  private int lastDirection;
+
   public Session(String _pNum, int _startValue, int _staircaseOrder){
      this.pNum = _pNum;
      this.startValue = _startValue;
@@ -62,6 +65,7 @@ public class Session {
 
   public void newAnswer(int answer){
     System.out.println("User Answer:" + answer);
+    
     this.updatePrototypes = true;
     this.currentTrail.setUserAnswer(answer);
     this.lastValue = this.currentTrail.getControlPrototype().getServoValue();
@@ -73,13 +77,16 @@ public class Session {
     } else {
       this.trialCount++;
       this.setNewPrototypeOrder();
+      this.updatePrototypeValues();
+      this.currentTrail.setCorrectAnswer(this.staircaseOrder);
     }
   }
 
   private void reversalCheck(){
     // if the last anwser was different to the past answer
     // System.out.println("reversal check: " + this. + ":" + this.currentTrail.getCorrectAnswer());
-    if (this.lastTrail.getUserAnswer() != this.lastTrail.getCorrectAnswer()){
+    System.out.println(this.lastDirection +":"+ this.curentDirection);
+    if (this.curentDirection != this.lastDirection){
       this.reveralCount++;
       this.lastTrail.setReversal(1);
     } else {
@@ -89,7 +96,6 @@ public class Session {
   }
 
   private void setNewPrototypeOrder(){
-    // set the order - TODO: seperate method?
     int int_random = rand.nextInt(NUM_PROTOTYPES);
     this.currentTrail = new Trial(this.startValue, int_random);
     if (int_random == 0){
@@ -99,26 +105,65 @@ public class Session {
       currentTrail.getRefPrototype().setOrder(1);
       currentTrail.getControlPrototype().setOrder(0);
     }
+  }
 
-    // update prototype values
+  private void updatePrototypeValues(){
     currentTrail.getRefPrototype().setServoValue(this.startValue);
 
-    if (this.staircaseOrder == 0) {
-      if (this.lastTrail.getReversal() == 0) {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
-      } else {
+    // incrase if the last answer was correct
+    // decrase if the last answer was incorrect
+    this.lastDirection = this.curentDirection;
+
+    if (this.lastTrail.getUserCorrect() == 1) {
+      if (lastTrail.getControlPrototype().getServoValue() > lastTrail.getRefPrototype().getServoValue()){
         currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
+        System.out.println("Correct: control--");
+        this.curentDirection = 0;
+      } else {
+        currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
+        System.out.println("Correct: control++");
+        this.curentDirection = 1;
       }
     } else {
-      if (this.lastTrail.getReversal() == 0){
-        currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
-        System.out.println("control--");
-      } else {
+      if (lastTrail.getControlPrototype().getServoValue() > lastTrail.getRefPrototype().getServoValue()){
         currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
-        System.out.println("control++");
+        System.out.println("Wrong: control++");
+        this.curentDirection = 1;
+      } else {
+        currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
+        System.out.println("Wrong: control--");
+        this.curentDirection = 0;
       }
     }
-    this.currentTrail.setCorrectAnswer(this.staircaseOrder);
+
+    // if (this.staircaseOrder == 0) {
+    //   if (this.lastTrail.getReversal() == 0) {
+    //     currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
+    //     System.out.println("control++");
+    //   } else {
+    //     currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
+    //     System.out.println("control--");
+    //   }
+    // } else {
+    //   if (this.lastTrail.getReversal() == 0){
+    //     currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
+    //     System.out.println("control--");
+    //   } else {
+    //     currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
+    //     System.out.println("control++");
+    //   }
+    // }
+
+    // TODO: sepertate the method
+    if (this.currentTrail.prototypesEqual()) {
+      System.out.println("equal");
+      if (this.lastValue > this.currentTrail.getControlPrototype().getServoValue()) {
+        currentTrail.getControlPrototype().setServoValue(this.currentTrail.getControlPrototype().getServoValue()-STIMULI_INCRIMENT);
+      } else {
+        currentTrail.getControlPrototype().setServoValue(this.currentTrail.getControlPrototype().getServoValue()+STIMULI_INCRIMENT);
+      }
+    }
+
   }
 
   private void addToCSV(){
@@ -154,5 +199,9 @@ public class Session {
 
   public int getReversalCount(){
     return this.reveralCount;
+  }
+
+  public String getStairCaseName(){
+    return this.staircaseOrderName;
   }
 }

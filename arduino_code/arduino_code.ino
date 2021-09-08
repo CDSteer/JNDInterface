@@ -14,7 +14,10 @@ int actuation;
 int incomingByte;
 int hall;
 
+int lastPos;
+
 void setActuatorPos(int pos){
+  lastPos = pos;
   actuation = analogRead(A1);
   while (actuation != pos){
     if (actuation > pos) {
@@ -27,14 +30,15 @@ void setActuatorPos(int pos){
     }
     actuation = analogRead(A1);
     // Serial.println(actuation);
+    digitalWrite(actNeg, LOW);
+    digitalWrite(actPos, LOW);
   }
-
-  float mm = map(actuation, 0.0, 1018.0, 0.0, 50.0);
+  Serial.print("p: ");
+  Serial.println(actuation);
+  float mm = map(actuation, 0.0, 1013.0, 0.0, 51.0);
   Serial.print("mm: ");
-  Serial.println(mm);
+  Serial.println(mm, 2);
 
-  digitalWrite(actNeg, LOW);
-  digitalWrite(actPos, LOW);
 }
  
 void setup(void) {
@@ -65,21 +69,8 @@ void setup(void) {
 }
 
 void loop(void) {
-  fsrReading = analogRead(fsrAnalogPin);
-  // Serial.println(fsrReading);
-  // Regular reading
-  float analog = analogRead(fsrAnalogPin);
-  // Serial.print("Non-Smooth: ");
-  // Serial.println(analog);
-  
-  // Smoothing with window size 10
-  float analogSmooth = as100.smooth(analog);
-  // Serial.print("Smooth (10): ");  
-  // Serial.println(analogSmooth);
-  delay(1000);
   actuation = analogRead(A1);
   // Serial.println(actuation);
-
   
   if (Serial.available() > 0) {
     // read the incoming byte:
@@ -91,5 +82,6 @@ void loop(void) {
     Serial.println(incomingByte);
   }
   if (incomingByte>0) setActuatorPos(incomingByte);
-
+  // if (actuation != lastPos) setActuatorPos(lastPos);
+  delay(100);
 }

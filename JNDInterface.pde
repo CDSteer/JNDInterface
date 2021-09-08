@@ -34,6 +34,8 @@ void draw(){
 
   text("Trails: " + String.valueOf(m_Session.getTrailCount())+"/"+m_Session.MAX_TRAILS, 200, 100);
   text("Reversals: " + String.valueOf(m_Session.getReversalCount())+"/"+m_Session.MAX_REVERSALS, 500, 100);
+  text("Direction: " + m_Session.getStairCaseName(), 200, 250);
+
 
 
   if (m_Session.getCurrentTrail().getRefPrototype().getOrder() == 0) {
