@@ -5,7 +5,7 @@ public class Session {
   public static final int MAX_REVERSALS = 10;
   public static final int MAX_TRAILS = 40;
   private static final int NUM_PROTOTYPES = 2;
-  private static final int STIMULI_INCRIMENT = 10;
+  private static final int STIMULI_INCRIMENT = 20;
 
   private Random rand = new Random();
 

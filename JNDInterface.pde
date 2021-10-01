@@ -14,16 +14,17 @@ Button btnB =  new Button(450, 300, 200, 100, "Black (B)");
 
 void setup(){
   size(800, 600);
+  printArray(Serial.list());
   System.out.println("A: " + Serial.list()[2]);
   System.out.println("B: " + Serial.list()[3]);
-  // prototypeConnectionA = new Serial(this, Serial.list()[2], 9600);
-  // prototypeConnectionB = new Serial(this, Serial.list()[3], 9600);
+   prototypeConnectionA = new Serial(this, Serial.list()[2], 9600);
+   prototypeConnectionB = new Serial(this, Serial.list()[3], 9600);
 
 
   setUpSession();
 
   delay(1000);
-  // sendValues();
+   sendValues();
   delay(1000);
 }
 
@@ -49,7 +50,7 @@ void draw(){
   while (m_Session.getUpdatePrototypes()){
     background(0);
     text("updating", 400, 300);
-    // sendValues();
+     sendValues();
     m_Session.setUpdatePrototypes(false);
     delay(1000);
   }
