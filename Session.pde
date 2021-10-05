@@ -161,13 +161,13 @@ public class Session {
 
     float  modA, modB;
     if (currentTrail.getRefPrototype().getOrder()==0) {
-      float modA = ((-5.99807841881165*pow(10,-15))*pow(this.oldRefVal,6)) + ((1.40757292885171*pow(10,-11))*pow(this.oldRefVal,5)) +(-1.07048271135381*pow(10,-8))*pow(this.oldRefVal,4) + (2.10812478107665*pow(10,-6))*pow(this.oldRefVal,3) + (0.000673838244380079*pow(this.oldRefVal,2))-0.185495010123363*this.oldRefVal -18.0807903150748;
-      float modB = (-6.55930413657345*pow(10,-15))*pow(this.oldConVal,6) + (1.68765767272837*pow(10,-11))*pow(this.oldConVal,5) + (-1.6067965304681*pow(10,-8))*pow(this.oldConVal,4) + (7.1016811980879*pow(10,-6))*pow(this.oldConVal,3) + (-0.00168750574244648*pow(this.oldConVal,2)) + 0.252288510699318*this.oldConVal -1.70825399362559;
+      modA = ((-5.99807841881165*pow(10,-15))*pow(this.oldRefVal,6)) + ((1.40757292885171*pow(10,-11))*pow(this.oldRefVal,5)) +(-1.07048271135381*pow(10,-8))*pow(this.oldRefVal,4) + (2.10812478107665*pow(10,-6))*pow(this.oldRefVal,3) + (0.000673838244380079*pow(this.oldRefVal,2))-0.185495010123363*this.oldRefVal -18.0807903150748;
+      modB = (-6.55930413657345*pow(10,-15))*pow(this.oldConVal,6) + (1.68765767272837*pow(10,-11))*pow(this.oldConVal,5) + (-1.6067965304681*pow(10,-8))*pow(this.oldConVal,4) + (7.1016811980879*pow(10,-6))*pow(this.oldConVal,3) + (-0.00168750574244648*pow(this.oldConVal,2)) + 0.252288510699318*this.oldConVal -1.70825399362559;
       this.currentTrail.getRefPrototype().setServoValue((int)this.oldRefVal+(int)modA);
       this.currentTrail.getControlPrototype().setServoValue((int)this.oldConVal+(int)modB);
     } else {
-      float modA = ((-5.99807841881165*pow(10,-15))*pow(this.oldConVal,6)) + ((1.40757292885171*pow(10,-11))*pow(this.oldConVal,5)) +(-1.07048271135381*pow(10,-8))*pow(this.oldConVal,4) + (2.10812478107665*pow(10,-6))*pow(this.oldConVal,3) + (0.000673838244380079*pow(this.oldConVal,2))-0.185495010123363*this.oldConVal -18.0807903150748;
-      float modB = (-6.55930413657345*pow(10,-15))*pow(this.oldRefVal,6) + (1.68765767272837*pow(10,-11))*pow(this.oldRefVal,5) + (-1.6067965304681*pow(10,-8))*pow(this.oldRefVal,4) + (7.1016811980879*pow(10,-6))*pow(this.oldRefVal,3) + (-0.00168750574244648*pow(this.oldRefVal,2)) + 0.252288510699318*this.oldRefVal -1.70825399362559;
+      modA = ((-5.99807841881165*pow(10,-15))*pow(this.oldConVal,6)) + ((1.40757292885171*pow(10,-11))*pow(this.oldConVal,5)) +(-1.07048271135381*pow(10,-8))*pow(this.oldConVal,4) + (2.10812478107665*pow(10,-6))*pow(this.oldConVal,3) + (0.000673838244380079*pow(this.oldConVal,2))-0.185495010123363*this.oldConVal -18.0807903150748;
+      modB = (-6.55930413657345*pow(10,-15))*pow(this.oldRefVal,6) + (1.68765767272837*pow(10,-11))*pow(this.oldRefVal,5) + (-1.6067965304681*pow(10,-8))*pow(this.oldRefVal,4) + (7.1016811980879*pow(10,-6))*pow(this.oldRefVal,3) + (-0.00168750574244648*pow(this.oldRefVal,2)) + 0.252288510699318*this.oldRefVal -1.70825399362559;
       this.currentTrail.getControlPrototype().setServoValue((int)this.oldConVal+(int)modA);
       this.currentTrail.getRefPrototype().setServoValue((int)this.oldRefVal+(int)modB);
     }
