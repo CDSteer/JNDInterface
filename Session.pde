@@ -74,7 +74,7 @@ public class Session {
 
     this.updatePrototypes = true;
     this.currentTrail.setUserAnswer(answer);
-    this.lastValue = this.currentTrail.getControlPrototype().getServoValue();
+    this.lastValue = (int)this.oldConVal;
     this.lastTrail = this.currentTrail;
     this.reversalCheck();
     this.addToCSV();
@@ -84,8 +84,8 @@ public class Session {
       this.trialCount++;
       this.setNewPrototypeOrder();
       this.updatePrototypeValues();
-      this.calibratePrototypes();
       this.currentTrail.setCorrectAnswer(this.staircaseOrder);
+      this.calibratePrototypes();
     }
   }
 
@@ -122,17 +122,17 @@ public class Session {
     this.lastDirection = this.curentDirection;
 
     if (this.lastTrail.getUserCorrect() == 1) {
-      if (lastTrail.getControlPrototype().getServoValue() > lastTrail.getRefPrototype().getServoValue()){
-        currentTrail.getControlPrototype().setServoValue(this.lastValue-STIMULI_INCRIMENT);
+      if (this.oldConVal > this.oldRefVal){
+        currentTrail.getControlPrototype().setServoValue((int)this.oldConVal-STIMULI_INCRIMENT);
         System.out.println("Correct: control--");
         this.curentDirection = 0;
       } else {
-        currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
+        currentTrail.getControlPrototype().setServoValue((int)this.oldConVal+STIMULI_INCRIMENT);
         System.out.println("Correct: control++");
         this.curentDirection = 1;
       }
     } else {
-      if (lastTrail.getControlPrototype().getServoValue() > lastTrail.getRefPrototype().getServoValue()){
+      if (this.oldConVal > this.oldRefVal){
         currentTrail.getControlPrototype().setServoValue(this.lastValue+STIMULI_INCRIMENT);
         System.out.println("Wrong: control++");
         this.curentDirection = 1;
@@ -158,16 +158,21 @@ public class Session {
   private void calibratePrototypes(){
     this.oldRefVal = (float)currentTrail.getRefPrototype().getServoValue();
     this.oldConVal = (float)currentTrail.getControlPrototype().getServoValue();
+    
+    System.out.println("Old Ref: "+oldRefVal);
+    System.out.println("Old Con: "+oldConVal);
 
     float  modA, modB;
     if (currentTrail.getRefPrototype().getOrder()==0) {
       modA = ((-5.99807841881165*pow(10,-15))*pow(this.oldRefVal,6)) + ((1.40757292885171*pow(10,-11))*pow(this.oldRefVal,5)) +(-1.07048271135381*pow(10,-8))*pow(this.oldRefVal,4) + (2.10812478107665*pow(10,-6))*pow(this.oldRefVal,3) + (0.000673838244380079*pow(this.oldRefVal,2))-0.185495010123363*this.oldRefVal -18.0807903150748;
       modB = (-6.55930413657345*pow(10,-15))*pow(this.oldConVal,6) + (1.68765767272837*pow(10,-11))*pow(this.oldConVal,5) + (-1.6067965304681*pow(10,-8))*pow(this.oldConVal,4) + (7.1016811980879*pow(10,-6))*pow(this.oldConVal,3) + (-0.00168750574244648*pow(this.oldConVal,2)) + 0.252288510699318*this.oldConVal -1.70825399362559;
+      
       this.currentTrail.getRefPrototype().setServoValue((int)this.oldRefVal+(int)modA);
       this.currentTrail.getControlPrototype().setServoValue((int)this.oldConVal+(int)modB);
     } else {
       modA = ((-5.99807841881165*pow(10,-15))*pow(this.oldConVal,6)) + ((1.40757292885171*pow(10,-11))*pow(this.oldConVal,5)) +(-1.07048271135381*pow(10,-8))*pow(this.oldConVal,4) + (2.10812478107665*pow(10,-6))*pow(this.oldConVal,3) + (0.000673838244380079*pow(this.oldConVal,2))-0.185495010123363*this.oldConVal -18.0807903150748;
       modB = (-6.55930413657345*pow(10,-15))*pow(this.oldRefVal,6) + (1.68765767272837*pow(10,-11))*pow(this.oldRefVal,5) + (-1.6067965304681*pow(10,-8))*pow(this.oldRefVal,4) + (7.1016811980879*pow(10,-6))*pow(this.oldRefVal,3) + (-0.00168750574244648*pow(this.oldRefVal,2)) + 0.252288510699318*this.oldRefVal -1.70825399362559;
+      
       this.currentTrail.getControlPrototype().setServoValue((int)this.oldConVal+(int)modA);
       this.currentTrail.getRefPrototype().setServoValue((int)this.oldRefVal+(int)modB);
     }
@@ -183,7 +188,7 @@ public class Session {
     newRow.setString("reference_ajusted_value", String.valueOf(currentTrail.getRefPrototype().getServoValue()));
     newRow.setString("contol_order", String.valueOf(currentTrail.getControlPrototype().getOrder()));
     newRow.setString("contol_value",    String.valueOf(oldConVal));
-    newRow.setString("contol_ajusted_value", String.valueOf(currentTrail.getRefPrototype().getServoValue()));
+    newRow.setString("contol_ajusted_value", String.valueOf(currentTrail.getControlPrototype().getServoValue()));
     newRow.setString("reversal",  String.valueOf(currentTrail.isReversal()));
     newRow.setString("correct_answer", String.valueOf(currentTrail.getCorrectAnswer()));
     newRow.setString("user_answer",    String.valueOf(currentTrail.getUserAnswer()));
