@@ -17,8 +17,8 @@ void setup(){
   printArray(Serial.list());
   System.out.println("A: " + Serial.list()[2]);
   System.out.println("B: " + Serial.list()[3]);
-   prototypeConnectionA = new Serial(this, Serial.list()[2], 9600);
-   prototypeConnectionB = new Serial(this, Serial.list()[3], 9600);
+  prototypeConnectionA = new Serial(this, Serial.list()[2], 9600);
+  prototypeConnectionB = new Serial(this, Serial.list()[3], 9600);
 
 
   setUpSession();
